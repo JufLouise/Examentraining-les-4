@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Opdrachten Overzicht</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #628141;   /* Groen */
+            --color-secondary: #B0BE9C; /* Lichtgroen */
+            --color-bg: #D9E5F3;        /* Lichtblauw */
+            --color-dark: #093A47;      /* Donkerblauw/Petrol */
+            --color-danger: #e74c3c;    /* Rood voor reset */
+        }
+
+        body {
+            background-color: var(--color-bg);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200;
+            color: var(--color-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* --- Header & Naam Input --- */
+        .header-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .input-group {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            padding: 12px 20px;
+            border: 2px solid var(--color-secondary);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            width: 250px;
+            color: var(--color-dark);
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--color-primary);
+        }
+
+        .btn-start {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .btn-start:hover {
+            background-color: var(--color-dark);
+        }
+
+        /* --- Dashboard Content (Hidden initially) --- */
+        #dashboard-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        #dashboard-content.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        /* --- Stats Bar --- */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: var(--color-dark);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stats-left {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .stats-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .stat-item span {
+            font-weight: 600;
+            font-size: 1.2em;
+            color: var(--color-secondary);
+        }
+
+        .share-btn {
+            background-color: var(--color-secondary);
+            color: var(--color-dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .share-btn:hover {
+            background-color: white;
+            transform: scale(1.05);
+        }
+
+        .reset-btn {
+            background-color: var(--color-danger);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .reset-btn:hover {
+            background-color: #c0392b;
+            transform: scale(1.05);
+        }
+
+        /* --- Grid Layout --- */
+        .assignments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+            color: var(--color-dark);
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 150px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            border-color: var(--color-secondary);
+        }
+
+        .card.completed {
+            background-color: #E8F5E9;
+            border-color: var(--color-primary);
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .card-desc {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .score-badge {
+            background: var(--color-primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .badge-verdiepend {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--color-dark);
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-modal {
+            padding: 10px 25px;
+            border-radius: 5px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-yes { background-color: var(--color-primary); color: white; }
+        .btn-no { background-color: #e74c3c; color: white; }
+        .btn-ok { background-color: var(--color-dark); color: white; width: 100%; }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <div class="header-section" id="header-box">
+            <h1 id="welcome-title">Opdrachten Overzicht</h1>
+            <p id="welcome-text">Welkom! Vul hieronder je naam in om te beginnen.</p>
+            <div class="input-group">
+                <input type="text" id="studentName" placeholder="Jouw naam..." autocomplete="off">
+                <button class="btn-start" onclick="startDashboard()">Verder</button>
+            </div>
+        </div>
+
+        <div id="dashboard-content">
+            <div class="stats-bar">
+                <div class="stats-left">
+                    <div class="stat-item">Gemaakt: <span id="progress-count">0/10</span></div>
+                    <div class="stat-item">Score: <span id="progress-score">0%</span></div>
+                </div>
+                <div class="stats-right">
+                    <button class="share-btn" onclick="openShareModal()">Deel voortgang</button>
+                    <button class="reset-btn" onclick="openResetModal()">Opnieuw beginnen</button>
+                </div>
+            </div>
+
+            <div class="assignments-grid" id="grid">
+                </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <h2>Weet je het zeker?</h2>
+            <p>Weet je zeker dat je je voortgang wilt delen met de docent?</p>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-yes" onclick="confirmShare()">Ja</button>
+                <button class="btn-modal btn-no" onclick="closeModal('confirmModal')">Nee</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <h2 style="color: var(--color-primary)">Gelukt!</h2>
+            <p>Je voortgang is gedeeld met je docent.</p>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-ok" onclick="closeModal('successModal')">Verder</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal">
+            <h2 style="color: var(--color-danger)">Let op!</h2>
+            <p>Weet je zeker dat je helemaal opnieuw wilt beginnen? <br><strong>Al je scores worden verwijderd.</strong></p>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-no" onclick="confirmReset()">Ja, verwijder alles</button>
+                <button class="btn-modal btn-yes" onclick="closeModal('resetModal')">Nee, annuleren</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const assignments = [
+            { id: 1, title: "Opdracht 1", file: "opdracht1.html", verdiepend: false },
+            { id: 2, title: "Opdracht 2", file: "opdracht2.html", verdiepend: false },
+            { id: 3, title: "Opdracht 3", file: "opdracht3.html", verdiepend: false },
+            { id: 4, title: "Opdracht 4", file: "opdracht4.html", verdiepend: false },
+            { id: 5, title: "Opdracht 5", file: "opdracht5.html", verdiepend: false },
+            { id: 6, title: "Opdracht 6", file: "opdracht6.html", verdiepend: false },
+            { id: 7, title: "Opdracht 7", file: "opdracht7.html", verdiepend: false },
+            { id: 8, title: "Opdracht 8", file: "opdracht8.html", verdiepend: false },
+            { id: 9, title: "Opdracht 9", file: "opdracht9.html", verdiepend: true },
+            { id: 10, title: "Opdracht 10", file: "opdracht10.html", verdiepend: true }
+        ];
+
+        // !!! VERVANG DEZE URL MET JE EIGEN GOOGLE SCRIPT URL !!!
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGKt0K5wGxcwSe9XkPhX1tYxNmg70QDNebiMUsL0a6NJJN6EGCI_c2PawjRF56yTIM_A/exec"; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('studentName');
+            
+            // Enter key support
+            document.getElementById('studentName').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    startDashboard();
+                }
+            });
+
+            if (savedName) {
+                document.getElementById('studentName').value = savedName;
+                startDashboard(); 
+            }
+        });
+
+        window.addEventListener('storage', () => {
+            renderGrid();
+            updateStats();
+        });
+
+        function startDashboard() {
+            const nameInput = document.getElementById('studentName');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                alert("Vul alsjeblieft eerst je naam in.");
+                return;
+            }
+
+            localStorage.setItem('studentName', name);
+
+            document.getElementById('welcome-title').innerText = `Welkom, ${name}`;
+            document.getElementById('welcome-text').innerText = "Hieronder zie je jouw opdrachten en voortgang.";
+            
+            const dashboard = document.getElementById('dashboard-content');
+            dashboard.classList.add('visible');
+
+            renderGrid();
+            updateStats();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            const storedData = JSON.parse(localStorage.getItem('studentProgress')) || {};
+
+            assignments.forEach(ass => {
+                const data = storedData[ass.id];
+                const isCompleted = data && data.completed;
+                const scoreText = data ? `${Math.round((data.score / data.total) * 100)}%` : '';
+
+                const card = document.createElement('a');
+                card.className = `card ${isCompleted ? 'completed' : ''}`;
+                card.href = ass.file;
+                card.target = "_blank";
+                
+                let html = `
+                    <div class="card-title">${ass.title}</div>
+                    <div class="card-desc">${isCompleted ? 'Voltooid' : 'Klik om te starten'}</div>
+                `;
+
+                if (isCompleted) {
+                    html += `<div class="score-badge">Score: ${scoreText}</div>`;
+                }
+
+                if (ass.verdiepend) {
+                    html += `<div class="badge-verdiepend">Verdieping</div>`;
+                }
+
+                card.innerHTML = html;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateStats() {
+            const storedData = JSON.parse(localStorage.getItem('studentProgress')) || {};
+            let completedCount = 0;
+            let totalScoreSum = 0;
+
+            Object.values(storedData).forEach(item => {
+                if (item.completed) {
+                    completedCount++;
+                    totalScoreSum += (item.score / item.total);
+                }
+            });
+
+            document.getElementById('progress-count').innerText = `${completedCount}/10`;
+            
+            const avgScore = completedCount > 0 ? Math.round((totalScoreSum / completedCount) * 100) : 0;
+            document.getElementById('progress-score').innerText = `${avgScore}%`;
+        }
+
+        // --- Modals & Buttons ---
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // SHARE functionaliteit
+        function openShareModal() {
+            const name = document.getElementById('studentName').value;
+            if(!name) {
+                alert("Vul eerst je naam in!");
+                return;
+            }
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function confirmShare() {
+            closeModal('confirmModal');
+            sendDataToGoogleSheet();
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        // RESET functionaliteit
+        function openResetModal() {
+            document.getElementById('resetModal').style.display = 'flex';
+        }
+
+        function confirmReset() {
+            // Verwijder alleen de progressie, behoud de naam (of haal 'studentName' ook weg als je dat wilt)
+            localStorage.removeItem('studentProgress');
+            
+            // Herlaad de pagina om te resetten
+            location.reload();
+        }
+
+        function sendDataToGoogleSheet() {
+            const name = document.getElementById('studentName').value;
+            const storedData = JSON.parse(localStorage.getItem('studentProgress')) || {};
+            
+            let completedCount = 0;
+            let totalScoreSum = 0;
+            
+            Object.values(storedData).forEach(item => {
+                if (item.completed) {
+                    completedCount++;
+                    totalScoreSum += (item.score / item.total);
+                }
+            });
+
+            let finalPercentage = "0%";
+            if (completedCount > 0) {
+                let avg = Math.round((totalScoreSum / completedCount) * 100);
+                finalPercentage = avg + "%";
+            }
+            let aantalString = completedCount + " / 10";
+
+            const formData = new FormData();
+            formData.append('naam', name);
+            formData.append('aantal', aantalString);
+            formData.append('percentage', finalPercentage);
+
+            fetch(GOOGLE_SCRIPT_URL, { 
+                method: 'POST', 
+                body: formData 
+            })
+            .then(response => console.log('Verzonden: ', name))
+            .catch(error => console.error('Fout:', error));
+        }
+    </script>
+</body>
+</html>
