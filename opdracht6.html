@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Quiz - Waarom nietsdoen goed is</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #628141;   /* Groen */
+            --color-secondary: #B0BE9C; /* Lichtgroen */
+            --color-bg: #D9E5F3;        /* Lichtblauw */
+            --color-dark: #093A47;      /* Donkerblauw/Petrol */
+        }
+
+        body {
+            background-color: var(--color-bg);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200;
+            color: var(--color-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2, .question-title {
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* --- NIEUWE STIJLEN VOOR KNOPPEN --- */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-home {
+            background-color: var(--color-dark);
+            color: white;
+        }
+
+        .btn-home:hover {
+            background-color: #0d5263;
+        }
+
+        .btn-next {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-next:hover {
+            background-color: #4a6330;
+        }
+
+        .footer-nav {
+            margin-top: 30px;
+            display: none; /* Verborgen tot na de quiz */
+            justify-content: center;
+            gap: 15px;
+            border-top: 2px solid var(--color-secondary);
+            padding-top: 20px;
+        }
+        /* ----------------------------------- */
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #000;
+            margin-bottom: 30px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .quiz-section {
+            border-top: 2px solid var(--color-secondary);
+            padding-top: 20px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question-title {
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .instruction {
+            font-size: 0.85em;
+            color: var(--color-primary);
+            margin-bottom: 5px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--color-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        label:hover {
+            background: var(--color-secondary);
+            color: white;
+        }
+
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--color-primary);
+            transform: scale(1.2);
+        }
+
+        #submit-btn {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 18px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        #submit-btn:hover {
+            background-color: var(--color-dark);
+        }
+
+        .feedback-box {
+            margin-top: 12px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.95em;
+            background-color: #f1f1f1;
+        }
+
+        .timestamp-ref {
+            display: block;
+            margin-top: 5px;
+            color: var(--color-dark);
+            font-style: italic;
+        }
+
+        #final-score {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--color-secondary);
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-nav">
+            <a href="index.html" class="nav-btn btn-home"> Home</a>
+        </div>
+
+        <h1>Video Quiz: The Power of Doing Nothing</h1>
+        
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/Y681hXWwhQY?rel=0&origin=https://www.youtube.com" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <form id="quiz-form" class="quiz-section">
+            
+            <div class="question">
+                <span class="instruction">Luister van 0:00 tot 0:30</span>
+                <span class="question-title">1. Neil vertelt aan Beth hoe zijn dag was. Hoe voelt hij zich op dit moment?</span>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="A"> A. Hij is erg vrolijk omdat hij de hele dag vrij was.</label>
+                    <label><input type="radio" name="q1" value="B"> B. Hij is uitgeput (exhausted) omdat hij het erg druk heeft gehad.</label>
+                    <label><input type="radio" name="q1" value="C"> C. Hij is boos op Beth omdat zij niets heeft gedaan.</label>
+                    <label><input type="radio" name="q1" value="D"> D. Hij voelt zich fit omdat hij met de kinderen heeft gesport.</label>
+                </div>
+                <div id="fb-q1" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 0:30 tot 1:00</span>
+                <span class="question-title">2. Wat is volgens Beth de verrassende waarheid over dieren in de natuur?</span>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="A"> A. De meeste dieren zijn de hele dag op zoek naar voedsel.</label>
+                    <label><input type="radio" name="q2" value="B"> B. Dieren bewegen veel sneller als er geen camera's bij zijn.</label>
+                    <label><input type="radio" name="q2" value="C"> C. De meeste dieren doen het grootste deel van de tijd helemaal niets.</label>
+                    <label><input type="radio" name="q2" value="D"> D. Alleen insecten zoals bijen werken echt hard.</label>
+                </div>
+                <div id="fb-q2" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Listen from 1:00 to 1:50</span>
+                <span class="question-title">3. Beth asks a question about the slowest moving animal on Earth. Which animals can Neil choose from?</span>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="A"> A. The lion, the giant tortoise, and the bee.</label>
+                    <label><input type="radio" name="q3" value="B"> B. The giant tortoise, the three-toed sloth, and the koala.</label>
+                    <label><input type="radio" name="q3" value="C"> C. The snail, the koala, and the ant.</label>
+                    <label><input type="radio" name="q3" value="D"> D. The three-toed sloth, the ant, and the giant tortoise.</label>
+                </div>
+                <div id="fb-q3" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 1:50 tot 2:15</span>
+                <span class="question-title">4. Wat zie je als je heel goed in een mierennest kijkt?</span>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="A"> A. Dat alle mieren de hele tijd superdruk bezig zijn.</label>
+                    <label><input type="radio" name="q4" value="B"> B. Dat de mieren ruzie maken over wie het werk moet doen.</label>
+                    <label><input type="radio" name="q4" value="C"> C. Dat ongeveer de helft van de mieren gewoon stilzit zonder iets te doen.</label>
+                    <label><input type="radio" name="q4" value="D"> D. Dat de mieren alleen werken als de koningin kijkt.</label>
+                </div>
+                <div id="fb-q4" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Listen from 2:15 to 3:00</span>
+                <span class="question-title">5. What does Professor Dan Charbonneau say about ants and humans?</span>
+                <div class="options">
+                    <label><input type="radio" name="q5" value="A"> A. Ants are much lazier than humans ever will be.</label>
+                    <label><input type="radio" name="q5" value="B"> B. Humans should be more like ants and work 24 hours a day.</label>
+                    <label><input type="radio" name="q5" value="C"> C. We think ants are a symbol of being hard-working (industrious), but half the colony is inactive.</label>
+                    <label><input type="radio" name="q5" value="D"> D. Ants only work hard when they are bored.</label>
+                </div>
+                <div id="fb-q5" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 3:00 tot 4:00</span>
+                <span class="question-title">6. Waarom denkt psycholoog Dr. Sandi Mann dat verveling (boredom) goed is voor mensen?</span>
+                <div class="options">
+                    <label><input type="radio" name="q6" value="A"> A. Omdat je hersenen rust nodig hebben om te kunnen slapen.</label>
+                    <label><input type="radio" name="q6" value="B"> B. Omdat verveling zorgt voor nieuwsgierigheid en nieuwe uitvindingen (zoals vuur of bier).</label>
+                    <label><input type="radio" name="q6" value="C"> C. Omdat mensen die zich vervelen minder geld uitgeven.</label>
+                    <label><input type="radio" name="q6" value="D"> D. Omdat je van verveling sneller gaat hardlopen.</label>
+                </div>
+                <div id="fb-q6" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Listen from 4:00 to 5:00</span>
+                <span class="question-title">7. Why is "switching off" (jezelf afsluiten/ontspannen) tegenwoordig zo moeilijk voor mensen?</span>
+                <div class="options">
+                    <label><input type="radio" name="q7" value="A"> A. Omdat we de hele tijd aan het swipen en scrollen zijn op onze telefoons.</label>
+                    <label><input type="radio" name="q7" value="B"> B. Omdat er overal op straat te veel lawaai is van auto's.</label>
+                    <label><input type="radio" name="q7" value="C"> C. Omdat we te veel koffie drinken tijdens ons werk.</label>
+                    <label><input type="radio" name="q7" value="D"> D. Omdat we bang zijn voor de dieren in het bos.</label>
+                </div>
+                <div id="fb-q7" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 5:00 tot 6.00</span>
+                <span class="question-title">8. Aan het einde geeft Beth het antwoord op de vraag over het langzaamste dier. Wat vertelt ze over de luiaard?</span>
+                <div class="options">
+                    <label><input type="radio" name="q8" value="A"> A. Hij beweegt zo langzaam dat er algen op zijn vacht groeien.</label>
+                    <label><input type="radio" name="q8" value="B"> B. Hij kan maximaal 30 kilometer per uur rennen.</label>
+                    <label><input type="radio" name="q8" value="C"> C. Hij is eigenlijk heel snel, maar alleen als hij honger heeft.</label>
+                    <label><input type="radio" name="q8" value="D"> D. Hij is het enige dier dat nooit slaapt.</label>
+                </div>
+                <div id="fb-q8" class="feedback-box"></div>
+            </div>
+
+            <button type="button" id="submit-btn" onclick="checkAnswers()">CONTROLEREN</button>
+        </form>
+
+        <div id="final-score"></div>
+
+        <div id="footer-nav" class="footer-nav">
+            <a href="index.html" class="nav-btn btn-home"> Home</a>
+            <a href="opdracht7.html" class="nav-btn btn-next">Volgende Opdracht </a>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATIE ---
+        const ASSIGNMENT_ID = 6; // Dit is Opdracht 6
+
+        function saveResultToHost(score, totalVragen) {
+            // 1. Haal bestaande progressie op
+            let progress = JSON.parse(localStorage.getItem('studentProgress')) || {};
+            
+            // 2. Sla deze opdracht op
+            progress[ASSIGNMENT_ID] = {
+                completed: true,
+                score: score,
+                total: totalVragen,
+                date: new Date().toISOString()
+            };
+
+            // 3. Schrijf terug naar geheugen
+            localStorage.setItem('studentProgress', JSON.stringify(progress));
+            
+            // 4. Optioneel: Stuur een signaal naar de host pagina als die open staat
+            window.dispatchEvent(new Event('storage'));
+        }
+
+        function checkAnswers() {
+            const correctAnswers = {
+                q1: { ans: "B", ref: "I'm exhausted, Beth!" },
+                q2: { ans: "C", ref: "most animals spend most of the time doing absolutely nothing" },
+                q3: { ans: "B", ref: "giant tortoise... three-toed sloth... koala" },
+                q4: { ans: "C", ref: "around half of them just sitting there motionless" },
+                q5: { ans: "C", ref: "symbol of industriousness... but... half the colony is inactive" },
+                q6: { ans: "B", ref: "Would humans have invented bread or beer or fire... if we hadn't been bored" },
+                q7: { ans: "A", ref: "constantly swiping and scrolling" },
+                q8: { ans: "A", ref: "move so slowly that algae grow on their coats" }
+            };
+
+            let score = 0;
+            const total = 8;
+
+            for (let i = 1; i <= total; i++) {
+                const qKey = 'q' + i;
+                const fbBox = document.getElementById('fb-' + qKey);
+                const selected = document.querySelector(`input[name="${qKey}"]:checked`);
+                
+                fbBox.style.display = "block";
+                
+                let isCorrect = selected && selected.value === correctAnswers[qKey].ans;
+                if (isCorrect) score++;
+
+                fbBox.innerHTML = `
+                    <span style="color: ${isCorrect ? '#2e7d32' : '#c62828'}; font-weight: 600;">
+                        ${isCorrect ? '✅ Goed!' : '❌ Onjuist. Het juiste antwoord was ' + correctAnswers[qKey].ans}
+                    </span>
+                    <span class="timestamp-ref">Sleutelmoment uit de video: "${correctAnswers[qKey].ref}"</span>
+                `;
+            }
+
+            const scoreDiv = document.getElementById('final-score');
+            scoreDiv.style.display = "block";
+            scoreDiv.innerHTML = `Quiz voltooid! Je score is ${score} van de ${total}.`;
+            
+            // --- IMPLEMENTATIE OPSLAAN & NAVIGATIE ---
+            
+            // 1. Sla resultaat op
+            saveResultToHost(score, total);
+
+            // 2. Verberg de controleer knop
+            document.getElementById("submit-btn").style.display = "none";
+
+            // 3. Toon de navigatieknoppen
+            const footerNav = document.getElementById("footer-nav");
+            footerNav.style.display = "flex";
+
+            // 4. Scroll naar beneden zodat de knoppen zichtbaar zijn
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
