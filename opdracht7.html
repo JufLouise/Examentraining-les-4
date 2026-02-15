@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Quiz - Silent Letters Comedy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #628141;   /* Groen */
+            --color-secondary: #B0BE9C; /* Lichtgroen */
+            --color-bg: #D9E5F3;        /* Lichtblauw */
+            --color-dark: #093A47;      /* Donkerblauw/Petrol */
+        }
+
+        body {
+            background-color: var(--color-bg);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200;
+            color: var(--color-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2, .question-title {
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* --- NIEUWE STIJLEN VOOR KNOPPEN --- */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-home {
+            background-color: var(--color-dark);
+            color: white;
+        }
+
+        .btn-home:hover {
+            background-color: #0d5263;
+        }
+
+        .btn-next {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-next:hover {
+            background-color: #4a6330;
+        }
+
+        .footer-nav {
+            margin-top: 30px;
+            display: none; /* Verborgen tot na de quiz */
+            justify-content: center;
+            gap: 15px;
+            border-top: 2px solid var(--color-secondary);
+            padding-top: 20px;
+        }
+        /* ----------------------------------- */
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #000;
+            margin-bottom: 30px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .quiz-section {
+            border-top: 2px solid var(--color-secondary);
+            padding-top: 20px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question-title {
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .instruction {
+            font-size: 0.85em;
+            color: var(--color-primary);
+            margin-bottom: 5px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--color-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        label:hover {
+            background: var(--color-secondary);
+            color: white;
+        }
+
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--color-primary);
+            transform: scale(1.2);
+        }
+
+        #submit-btn {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 18px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        #submit-btn:hover {
+            background-color: var(--color-dark);
+        }
+
+        .feedback-box {
+            margin-top: 12px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.95em;
+            background-color: #f1f1f1;
+        }
+
+        .timestamp-ref {
+            display: block;
+            margin-top: 5px;
+            color: var(--color-dark);
+            font-style: italic;
+        }
+
+        #final-score {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--color-secondary);
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-nav">
+            <a href="index.html" class="nav-btn btn-home"> Home</a>
+        </div>
+
+        <h1>Comedy Quiz: Engelse Stille Letters</h1>
+        
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/BrJv_wUEKko?rel=0&origin=https://www.youtube.com" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <form id="quiz-form" class="quiz-section">
+            
+            <div class="question">
+                <span class="instruction">Luister van 0:18 tot 0:50</span>
+                <span class="question-title">1. Waarom vindt de spreker het woord 'hour' (uur) een verspilling van ieders tijd?</span>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="A"> A. Omdat het uur veel te lang duurt volgens hem.</label>
+                    <label><input type="radio" name="q1" value="B"> B. Omdat er een letter 'H' in staat die je helemaal niet uitspreekt.</label>
+                    <label><input type="radio" name="q1" value="C"> C. Omdat hij liever het woord 'sandwich' gebruikt.</label>
+                    <label><input type="radio" name="q1" value="D"> D. Omdat het woord 'hour' hetzelfde klinkt als 'our'.</label>
+                </div>
+                <div id="fb-q1" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 1:35 tot 1:55</span>
+                <span class="question-title">2. De spreker stelt voor om een "Silent Letter Day" te houden. Op welke dag moet dit volgens hem gevierd worden?</span>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="A"> A. Op een maandag in de zomer.</label>
+                    <label><input type="radio" name="q2" value="B"> B. Op een vrijdag in de winter.</label>
+                    <label><input type="radio" name="q2" value="C"> C. Op een woensdag (Wed-nes-day) in de herfst (Autumn).</label>
+                    <label><input type="radio" name="q2" value="D"> D. Op de eerste dag van de maand februari.</label>
+                </div>
+                <div id="fb-q2" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 2:30 tot 4:05</span>
+                <span class="question-title">3. Wat moet er volgens de spreker gebeuren op deze speciale dag als het gaat om eten en drinken?</span>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="A"> A. Je mag alleen eten met je handen en geen mes gebruiken.</label>
+                    <label><input type="radio" name="q3" value="B"> B. Je eet een buffet met onder andere zalm (Salaman) en je drinkt champagne.</label>
+                    <label><input type="radio" name="q3" value="C"> C. Je mag alleen eten in een restaurant dat "The Gnome" heet.</label>
+                    <label><input type="radio" name="q3" value="D"> D. Je moet al het eten zelf snijden met een hele grote schaar (skizzers).</label>
+                </div>
+                <div id="fb-q3" class="feedback-box"></div>
+            </div>
+
+            <button type="button" id="submit-btn" onclick="checkAnswers()">CONTROLEREN</button>
+        </form>
+
+        <div id="final-score"></div>
+
+        <div id="footer-nav" class="footer-nav">
+            <a href="index.html" class="nav-btn btn-home"> Home</a>
+            <a href="opdracht8.html" class="nav-btn btn-next">Volgende Opdracht </a>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATIE ---
+        const ASSIGNMENT_ID = 7; // Dit is Opdracht 7
+
+        function saveResultToHost(score, totalVragen) {
+            // 1. Haal bestaande progressie op
+            let progress = JSON.parse(localStorage.getItem('studentProgress')) || {};
+            
+            // 2. Sla deze opdracht op
+            progress[ASSIGNMENT_ID] = {
+                completed: true,
+                score: score,
+                total: totalVragen,
+                date: new Date().toISOString()
+            };
+
+            // 3. Schrijf terug naar geheugen
+            localStorage.setItem('studentProgress', JSON.stringify(progress));
+            
+            // 4. Optioneel: Stuur een signaal naar de host pagina als die open staat
+            window.dispatchEvent(new Event('storage'));
+        }
+
+        function checkAnswers() {
+            const correctAnswers = {
+                q1: { ans: "B", ref: "why is the word hour spelled with an H... it's a waste of everybody's time" },
+                q2: { ans: "C", ref: "it would be on a Wed-nes-day... in the Autumn" },
+                q3: { ans: "B", ref: "food is buffet style... Salamon... celebrate with Champag-ne" }
+            };
+
+            let score = 0;
+            const total = 3;
+
+            for (let i = 1; i <= total; i++) {
+                const qKey = 'q' + i;
+                const fbBox = document.getElementById('fb-' + qKey);
+                const selected = document.querySelector(`input[name="${qKey}"]:checked`);
+                
+                fbBox.style.display = "block";
+                
+                let isCorrect = selected && selected.value === correctAnswers[qKey].ans;
+                if (isCorrect) score++;
+
+                fbBox.innerHTML = `
+                    <span style="color: ${isCorrect ? '#2e7d32' : '#c62828'}; font-weight: 600;">
+                        ${isCorrect ? '✅ Goed!' : '❌ Onjuist. Het juiste antwoord was ' + correctAnswers[qKey].ans}
+                    </span>
+                    <span class="timestamp-ref">Sleutelmoment uit de video: "${correctAnswers[qKey].ref}"</span>
+                `;
+            }
+
+            const scoreDiv = document.getElementById('final-score');
+            scoreDiv.style.display = "block";
+            scoreDiv.innerHTML = `Quiz voltooid! Je score is ${score} van de ${total}.`;
+            
+            // --- IMPLEMENTATIE OPSLAAN & NAVIGATIE ---
+            
+            // 1. Sla resultaat op
+            saveResultToHost(score, total);
+
+            // 2. Verberg de controleer knop
+            document.getElementById("submit-btn").style.display = "none";
+
+            // 3. Toon de navigatieknoppen
+            const footerNav = document.getElementById("footer-nav");
+            footerNav.style.display = "flex";
+
+            // 4. Scroll naar beneden zodat de knoppen zichtbaar zijn
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
