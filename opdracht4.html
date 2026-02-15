@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Quiz - Sesamstraat Poppenspelers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #628141;   /* Groen */
+            --color-secondary: #B0BE9C; /* Lichtgroen */
+            --color-bg: #D9E5F3;        /* Lichtblauw */
+            --color-dark: #093A47;      /* Donkerblauw/Petrol */
+        }
+
+        body {
+            background-color: var(--color-bg);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200;
+            color: var(--color-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2, .question-title {
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* --- NIEUWE STIJLEN VOOR KNOPPEN --- */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-home {
+            background-color: var(--color-dark);
+            color: white;
+        }
+
+        .btn-home:hover {
+            background-color: #0d5263;
+        }
+
+        .btn-next {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-next:hover {
+            background-color: #4a6330;
+        }
+
+        .footer-nav {
+            margin-top: 30px;
+            display: none; /* Verborgen tot na de quiz */
+            justify-content: center;
+            gap: 15px;
+            border-top: 2px solid var(--color-secondary);
+            padding-top: 20px;
+        }
+        /* ----------------------------------- */
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #000;
+            margin-bottom: 30px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .quiz-section {
+            border-top: 2px solid var(--color-secondary);
+            padding-top: 20px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question-title {
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .instruction {
+            font-size: 0.85em;
+            color: var(--color-primary);
+            margin-bottom: 5px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--color-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        label:hover {
+            background: var(--color-secondary);
+            color: white;
+        }
+
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--color-primary);
+            transform: scale(1.2);
+        }
+
+        #submit-btn {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 18px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        #submit-btn:hover {
+            background-color: var(--color-dark);
+        }
+
+        .feedback-box {
+            margin-top: 12px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.95em;
+            background-color: #f1f1f1;
+        }
+
+        .timestamp-ref {
+            display: block;
+            margin-top: 5px;
+            color: var(--color-dark);
+            font-style: italic;
+        }
+
+        #final-score {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--color-secondary);
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-nav">
+            <a href="index.html" class="nav-btn btn-home"> Home</a>
+        </div>
+
+        <h1>Video Quiz: Sesamstraat Poppenspelers</h1>
+        
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/2pVHOaT9CZ4?rel=0&origin=https://www.youtube.com" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <form id="quiz-form" class="quiz-section">
+            
+            <div class="question">
+                <span class="instruction">Luister van 0:00 tot 0:40</span>
+                <span class="question-title">1. Matt Vogel legt uit dat er drie soorten poppen zijn. In welke categorie valt Big Bird?</span>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="A"> A. Het is een pop die met stokjes (rods) wordt bewogen.</label>
+                    <label><input type="radio" name="q1" value="B"> B. Het is een pop die je als een kostuum aantrekt/draagt.</label>
+                    <label><input type="radio" name="q1" value="C"> C. Het is een kleine pop die je alleen met je hand beweegt.</label>
+                    <label><input type="radio" name="q1" value="D"> D. Het is een pop die alleen door computers wordt bestuurd.</label>
+                </div>
+                <div id="fb-q1" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 0:40 tot 1:30</span>
+                <span class="question-title">2. Hoe zorgt de poppenspeler ervoor dat Big Bird zijn ogen kan bewegen?</span>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="A"> A. Door met zijn rechterhand een hendel in de nek te trekken.</label>
+                    <label><input type="radio" name="q2" value="B"> B. Door een knopje op de vloer met zijn voet in te drukken.</label>
+                    <label><input type="radio" name="q2" value="C"> C. Door een klein hendeltje (trigger) met zijn pink te bewegen.</label>
+                    <label><input type="radio" name="q2" value="D"> D. Door heel hard met zijn eigen ogen te knipperen in het pak.</label>
+                </div>
+                <div id="fb-q2" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 1:30 tot 2:00</span>
+                <span class="question-title">3. Ryan Dillon (de speler van Elmo) legt uit hoe hij de mond van Elmo beweegt. Wat is hierbij heel belangrijk?</span>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="A"> A. Dat je de bovenkant van de mond stilhoudt en alleen de onderkaak beweegt.</label>
+                    <label><input type="radio" name="q3" value="B"> B. Dat je de mond zo ver mogelijk opendoet bij elk woord.</label>
+                    <label><input type="radio" name="q3" value="C"> C. Dat je de mond alleen beweegt als Elmo lacht.</label>
+                    <label><input type="radio" name="q3" value="D"> D. Dat je de mond met twee handen tegelijk bedient.</label>
+                </div>
+                <div id="fb-q3" class="feedback-box"></div>
+            </div>
+
+            <div class="question">
+                <span class="instruction">Luister van 2:00 tot 2:50</span>
+                <span class="question-title">4. Poppen zoals Elmo kunnen hun vingers niet echt bewegen. Hoe zorgen de makers ervoor dat ze toch spullen kunnen oppakken?</span>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="A"> A. Ze gebruiken onzichtbare touwtjes die aan de vingers zitten.</label>
+                    <label><input type="radio" name="q4" value="B"> B. Ze plakken de spullen vast met sterke lijm aan de handjes.</label>
+                    <label><input type="radio" name="q4" value="C"> C. Ze plaatsen magneten in de palmen van de handen van de pop.</label>
+                    <label><input type="radio" name="q4" value="D"> D. Ze gebruiken speciale handschoenen met klittenband.</label>
+                </div>
+                <div id="fb-q4" class="feedback-box"></div>
+            </div>
+
+            <button type="button" id="submit-btn" onclick="checkAnswers()">CONTROLEREN</button>
+        </form>
+
+        <div id="final-score"></div>
+
+        <div id="footer-nav" class="footer-nav">
+            <a href="index.html" class="nav-btn btn-home"> Home</a>
+            <a href="opdracht5.html" class="nav-btn btn-next">Volgende Opdracht </a>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATIE ---
+        const ASSIGNMENT_ID = 4; // Dit is Opdracht 4
+
+        function saveResultToHost(score, totalVragen) {
+            // 1. Haal bestaande progressie op
+            let progress = JSON.parse(localStorage.getItem('studentProgress')) || {};
+            
+            // 2. Sla deze opdracht op
+            progress[ASSIGNMENT_ID] = {
+                completed: true,
+                score: score,
+                total: totalVragen,
+                date: new Date().toISOString()
+            };
+
+            // 3. Schrijf terug naar geheugen
+            localStorage.setItem('studentProgress', JSON.stringify(progress));
+            
+            // 4. Optioneel: Stuur een signaal naar de host pagina als die open staat
+            window.dispatchEvent(new Event('storage'));
+        }
+
+        function checkAnswers() {
+            const correctAnswers = {
+                q1: { ans: "B", ref: "full-body costume puppet" },
+                q2: { ans: "C", ref: "a little trigger right by his pinky" },
+                q3: { ans: "A", ref: "keep the top of the head still and drop the thumb" },
+                q4: { ans: "C", ref: "magnets in the palms of the hands" }
+            };
+
+            let score = 0;
+            const total = 4;
+
+            for (let i = 1; i <= total; i++) {
+                const qKey = 'q' + i;
+                const fbBox = document.getElementById('fb-' + qKey);
+                const selected = document.querySelector(`input[name="${qKey}"]:checked`);
+                
+                fbBox.style.display = "block";
+                
+                let isCorrect = selected && selected.value === correctAnswers[qKey].ans;
+                if (isCorrect) score++;
+
+                fbBox.innerHTML = `
+                    <span style="color: ${isCorrect ? '#2e7d32' : '#c62828'}; font-weight: 600;">
+                        ${isCorrect ? '✅ Goed!' : '❌ Onjuist. Het juiste antwoord was ' + correctAnswers[qKey].ans}
+                    </span>
+                    <span class="timestamp-ref">Bevestiging uit video: "${correctAnswers[qKey].ref}"</span>
+                `;
+            }
+
+            const scoreDiv = document.getElementById('final-score');
+            scoreDiv.style.display = "block";
+            scoreDiv.innerHTML = `Gereed! Je hebt ${score} van de ${total} vragen goed!`;
+            
+            // --- IMPLEMENTATIE OPSLAAN & NAVIGATIE ---
+            
+            // 1. Sla resultaat op
+            saveResultToHost(score, total);
+
+            // 2. Verberg de controleer knop
+            document.getElementById("submit-btn").style.display = "none";
+
+            // 3. Toon de navigatieknoppen
+            const footerNav = document.getElementById("footer-nav");
+            footerNav.style.display = "flex";
+
+            // 4. Scroll naar beneden zodat de knoppen zichtbaar zijn
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
